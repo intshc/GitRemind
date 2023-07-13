@@ -8,3 +8,13 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: tester
     password: test
+
+  config:
+    import: application-API-Key.yml
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${google.clientId}
+            client-secret: ${google.clientSecret}
