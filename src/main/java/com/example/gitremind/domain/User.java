@@ -23,10 +23,20 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+    @Column
+    private String picture;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
     @Builder
-    public User(String username, String email) {
+    public User(String username, String email, String picture, Role role) {
         this.username = username;
         this.email = email;
+        this.picture = picture;
+        this.role = role;
     }
-
+    public String getRoleKey(){
+        return this.role.getKey();
+    }
 }
