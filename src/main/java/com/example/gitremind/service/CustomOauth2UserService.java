@@ -1,6 +1,7 @@
 package com.example.gitremind.service;
 
 import com.example.gitremind.domain.User;
+import com.example.gitremind.dto.OAuthAttributes;
 import com.example.gitremind.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private final UserRepository userRepository;
     private final HttpSession httpSession;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
@@ -40,11 +42,12 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
         return new DefaultOAuth2User(
                 Collections.singleton(new
                         SimpleGrantedAuthority(user.getRoleKey())),
-                attributes.getAttrobutes(),
+                attributes.getAttributes(),
                 attributes.getNameAttributeKey());
 
     }
-    private User saveOrUpdate(OAuthAttributes attributes){
+
+    private User saveOrUpdate(OAuthAttributes attributes) {
         User user = userRepository.findByEmail(attributes.getEmail())
                 .map(entity -> entity.update(attributes.
                         getName(), attributes.getPicture()))
