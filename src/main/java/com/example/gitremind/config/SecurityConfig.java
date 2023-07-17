@@ -1,33 +1,44 @@
-//package com.example.gitremind.config;
-//
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.config.http.SessionCreationPolicy;
-//import org.springframework.security.web.SecurityFilterChain;
-//
-//@Configuration
-//@EnableWebSecurity
-//public class SecurityConfig {
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        return
-//                http.
-//                        //csrf 공격 방지
-//                        csrf().disable()
-//                        //다른 도메인의 프레임 내에서 로드되는 것을 방지
-//                        .headers().frameOptions().disable()
-//                        .and()
-//                        //로그인기능 x
-//                        .authorizeHttpRequests()
-//                        .anyRequest().permitAll()
-//                        .and()
-//                        //로그아웃시 "/"경로로 이동
-//                        .logout()
-//                        .logoutSuccessUrl("/")
-//                        .and()
-//                        .build();
-//    }
-//}
+package com.example.gitremind.config;
+
+import com.example.gitremind.domain.Role;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+public class SecurityConfig {
+
+    private final CustomOauth2UserService customOauth2UserService;
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return
+                http.
+                        //csrf 공격 방지
+                                csrf().disable()
+                        //다른 도메인의 프레임 내에서 로드되는 것을 방지
+                        .headers().frameOptions().disable()
+                        .and()
+                        .authorizeHttpRequests()
+                        .requestMatchers("/", "/css/**", "/images/**",
+                                "/js/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/api/v1/**").hasRole(Role.USER.name())
+                        .anyRequest().authenticated()
+                        .and()
+                        //로그아웃시 "/"경로로 이동
+                        .logout()
+                        .logoutSuccessUrl("/")
+                        .and()
+                        .oauth2Login()
+                        //로그인 성공 이후 사용자 정보를 가져올때 설정담당
+                        .userInfoEndpoint()
+                        //소셜 로그인 성공 시 후속 조치를 진행할 UserService 인터페이스의 구현체를 등록한다.
+                        //리소스 서버(즉, 소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시할 수 있다.
+                        .userService(customOauth2UserService)
+                        .build();
+    }
+}
