@@ -36,6 +36,12 @@ public class User {
         this.picture = picture;
         this.role = role;
     }
+
+    public User update(String username, String picture){
+        this.username = username;
+        this.picture = picture;
+        return this;
+    }
     public String getRoleKey(){
         return this.role.getKey();
     }
