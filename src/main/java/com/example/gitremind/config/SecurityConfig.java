@@ -1,29 +1,33 @@
-package com.example.gitremind.config;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return
-                http.csrf().disable().cors().and()
-                        .sessionManagement()
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                        .and()
-                        .authorizeHttpRequests()
-                        //login 엔드포인트에 대한 POST 요청은 보호되지 않음
-                        .anyRequest().permitAll()
-                        .and()
-                        .build();
-    }
-}
+//package com.example.gitremind.config;
+//
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+//import org.springframework.security.config.http.SessionCreationPolicy;
+//import org.springframework.security.web.SecurityFilterChain;
+//
+//@Configuration
+//@EnableWebSecurity
+//public class SecurityConfig {
+//
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        return
+//                http.
+//                        //csrf 공격 방지
+//                        csrf().disable()
+//                        //다른 도메인의 프레임 내에서 로드되는 것을 방지
+//                        .headers().frameOptions().disable()
+//                        .and()
+//                        //로그인기능 x
+//                        .authorizeHttpRequests()
+//                        .anyRequest().permitAll()
+//                        .and()
+//                        //로그아웃시 "/"경로로 이동
+//                        .logout()
+//                        .logoutSuccessUrl("/")
+//                        .and()
+//                        .build();
+//    }
+//}
