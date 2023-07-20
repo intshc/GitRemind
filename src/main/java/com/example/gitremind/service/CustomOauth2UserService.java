@@ -2,6 +2,7 @@ package com.example.gitremind.service;
 
 import com.example.gitremind.domain.User;
 import com.example.gitremind.dto.OAuthAttributes;
+import com.example.gitremind.dto.SessionUser;
 import com.example.gitremind.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -28,14 +29,18 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
+        //현재 로그인 진행중인 서비스를 구분하는 값(구글, 네이버)
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
+        //Oauth2 로그인 진행 시 키가 되는 필드값(Primary Key, 구글은 sub)
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
                 .getUserInfoEndpoint().getUserNameAttributeName();
 
+        //Oauth2 유저의 attribute 를 담을 클래스
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName,
                 oAuth2User.getAttributes());
 
+        //세션에 사용자 정보를 담을 dto클래스
         User user = saveOrUpdate(attributes);
         httpSession.setAttribute("user", new SessionUser(user));
 

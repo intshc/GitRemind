@@ -25,6 +25,7 @@ public class OAuthAttributes {
         this.picture = picture;
     }
 
+    //OAuth2User 는 Map 이기에 값 하나하나를 변환해야한다.
     public static OAuthAttributes of(String registrationId,
                                      String userNameAttributeName,
                                      Map<String, Object> attributes) {
@@ -42,6 +43,8 @@ public class OAuthAttributes {
                 .build();
     }
 
+    //생성 시점은 처음 가입 할때
+    //가입할때 기본 권한은 GUEST
     public User toEntity(){
         return User.builder()
                 .username(name)
