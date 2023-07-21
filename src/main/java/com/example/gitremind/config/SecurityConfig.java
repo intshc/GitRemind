@@ -21,13 +21,13 @@ public class SecurityConfig {
         return
                 http.
                         //csrf 공격 방지
-                                csrf().disable()
+                                csrf().disable().cors().and()
                         //다른 도메인의 프레임 내에서 로드되는 것을 방지
                         .headers().frameOptions().disable()
                         .and()
                         .authorizeHttpRequests()
                         .requestMatchers("/", "/css/**", "/images/**",
-                                "/js/**", "/h2-console/**").permitAll()
+                                "/js/**", "/h2-console/**", "/favicon.ico").permitAll()
                         .requestMatchers("/api/v1/**").hasRole(Role.USER.name())
                         .anyRequest().authenticated()
                         .and()
