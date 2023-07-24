@@ -47,3 +47,6 @@ spring:
             scope:
               - profile
               - email
+          github:
+            client-id: ${github.clientId}
+            client-secret: ${github.clientSecret}

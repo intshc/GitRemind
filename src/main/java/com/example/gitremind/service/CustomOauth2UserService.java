@@ -29,10 +29,10 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        //현재 로그인 진행중인 서비스를 구분하는 값(구글, 네이버)
+        //현재 로그인 진행중인 서비스를 구분하는 값(구글은 google, 네이버는 naver, 깃허브는 github)
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        //Oauth2 로그인 진행 시 키가 되는 필드값(Primary Key, 구글은 sub, 네이버는 response)
+        //Oauth2 로그인 진행 시 키가 되는 필드값(Primary Key, 구글은 sub, 네이버는 response, 깃허브는 id)
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
                 .getUserInfoEndpoint().getUserNameAttributeName();
 
@@ -55,8 +55,8 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private User saveOrUpdate(OAuthAttributes attributes) {
         User user = userRepository.findByEmail(attributes.getEmail())
-                .map(entity -> entity.update(attributes.
-                        getName(), attributes.getPicture()))
+                .map(entity -> entity.update(
+                        attributes.getName(), attributes.getPicture()))
                 .orElse(attributes.toEntity());
         return userRepository.save(user);
     }
