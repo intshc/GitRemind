@@ -3,6 +3,7 @@ package com.example.gitremind.config;
 import com.example.gitremind.handler.CustomAuthenticationSuccessHandler;
 import com.example.gitremind.service.CustomOauth2UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ public class SecurityConfig {
 
     private final CustomOauth2UserService customOauth2UserService;
     private final ObjectMapper objectMapper;
+    private final HttpSession httpSession;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -64,6 +66,6 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {
-        return new CustomAuthenticationSuccessHandler(objectMapper);
+        return new CustomAuthenticationSuccessHandler(objectMapper,httpSession);
     }
 }
