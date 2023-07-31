@@ -29,6 +29,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private RefreshToken refreshToken;
+
     @Builder
     public User(String username, String email, String picture, Role role) {
         this.username = username;
@@ -37,12 +41,13 @@ public class User {
         this.role = role;
     }
 
-    public User update(String username, String picture){
+    public User update(String username, String picture) {
         this.username = username;
         this.picture = picture;
         return this;
     }
-    public String getRoleKey(){
+
+    public String getRoleKey() {
         return this.role.getKey();
     }
 }

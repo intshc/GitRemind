@@ -1,7 +1,9 @@
 package com.example.gitremind.config;
 
 import com.example.gitremind.handler.CustomAuthenticationSuccessHandler;
+import com.example.gitremind.repository.UserRepository;
 import com.example.gitremind.service.CustomOauth2UserService;
+import com.example.gitremind.service.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,8 @@ public class SecurityConfig {
     private final CustomOauth2UserService customOauth2UserService;
     private final ObjectMapper objectMapper;
     private final HttpSession httpSession;
+    private final TokenService tokenService;
+    private final UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -43,7 +47,7 @@ public class SecurityConfig {
                 .requestMatchers(toH2Console()).permitAll()
                 .requestMatchers("/", "/css/**", "/images/**",
                         "/js/**", "/h2-console/**", "/favicon.ico", "/login"
-                ,"/user/api").permitAll()
+                        , "/user/api").permitAll()
                 .anyRequest().authenticated();
 
         //login 관련
@@ -66,6 +70,6 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {
-        return new CustomAuthenticationSuccessHandler(objectMapper,httpSession);
+        return new CustomAuthenticationSuccessHandler(objectMapper, httpSession, tokenService, userRepository);
     }
 }

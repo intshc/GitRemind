@@ -42,6 +42,7 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         //세션에 사용자 정보를 담을 dto클래스
         User user = saveOrUpdate(attributes);
+
         httpSession.setAttribute("user", new SessionUser(user));
 
         //(권한, 정보, 키값)
