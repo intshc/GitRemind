@@ -15,14 +15,16 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * 로그인 성공시 Access Token과 Refresh Token 발급
  */
+@Component
 @RequiredArgsConstructor
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -30,7 +32,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final HttpSession httpSession;
     private final TokenService tokenService;
     private final UserRepository userRepository;
-
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -41,28 +42,29 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             throw new IllegalStateException("User authentication failed");
         }
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
-        Optional<User> byEmail = userRepository.findByEmail(user.getEmail());
-        User userFromRepo = byEmail.orElse(null);
+
+        User userFromRepo = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         String accessToken = tokenService.createAccessToken(user.getName());
         String refreshToken = tokenService.createRefreshToken(user.getName());
 
         httpSession.setAttribute("accessToken", accessToken);
-
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge(1209600); // 2주
-        refreshTokenCookie.setSecure(true); // 자바스크립트로 못 읽게
-        refreshTokenCookie.isHttpOnly();
-
         tokenService.saveRefreshTokenInRepo(userFromRepo, refreshToken);
 
+        user.setAccessToken(accessToken);
+        Cookie refreshTokenCookie = tokenService.createRefreshTokenCookie(refreshToken);
+
+        //provider 구하기 예)naver, google, github
+        OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
+        String provider = oauth2Token.getAuthorizedClientRegistrationId();
+        String redirect_uri = "http://localhost:3000/login/oauth2/code/" + provider;
+
         response.setCharacterEncoding("utf-8");
-        response.setHeader("accessToken", accessToken);
-        response.addCookie(refreshTokenCookie);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        objectMapper.writeValue(response.getWriter(), user);
+        response.addCookie(refreshTokenCookie);
+        response.sendRedirect(redirect_uri);
+
+        clearAuthenticationAttributes(request);// 세션 제거
     }
 }

@@ -11,10 +11,13 @@ public class SessionUser implements Serializable {
     private String name;
     private String email;
     private String picture;
-
+    private String accessToken;
     public SessionUser(User user) {
         this.name = user.getUsername();
         this.email = user.getEmail();
         this.picture = user.getPicture();
+    }
+    public void setAccessToken(String accessToken){
+        this.accessToken = accessToken;
     }
 }

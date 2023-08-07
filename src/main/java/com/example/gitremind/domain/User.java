@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Entity
 @Getter
@@ -30,8 +33,8 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private RefreshToken refreshToken;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private final Set<RefreshToken> refreshTokens = new HashSet<>();
 
     @Builder
     public User(String username, String email, String picture, Role role) {

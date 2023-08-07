@@ -4,6 +4,7 @@ import com.example.gitremind.domain.RefreshToken;
 import com.example.gitremind.domain.User;
 import com.example.gitremind.jwt.JwtUtil;
 import com.example.gitremind.repository.RefreshTokenRepository;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +31,17 @@ public class TokenService {
                 .user(user)
                 .token(refreshToken)
                 .expiryDate(LocalDateTime.now().plusDays(14).toInstant(ZoneOffset.UTC))
-
                 .build();
         tokenRepository.save(refreshTokenInRepo);
     }
+    public Cookie createRefreshTokenCookie(String refreshToken) {
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setMaxAge(1209600); // 2주
+        refreshTokenCookie.setSecure(true); // 자바스크립트로 못 읽게
 
+        return refreshTokenCookie;
+    }
 
 }

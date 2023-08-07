@@ -46,8 +46,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(toH2Console()).permitAll()
                 .requestMatchers("/", "/css/**", "/images/**",
-                        "/js/**", "/h2-console/**", "/favicon.ico", "/login"
-                        , "/user/api").permitAll()
+                        "/js/**", "/h2-console/**", "/favicon.ico", "/login",
+                        "/login/oauth2/code/**",
+                        "/user/api").permitAll()
                 .anyRequest().authenticated();
 
         //login 관련
@@ -55,6 +56,9 @@ public class SecurityConfig {
                 .oauth2Login()
                 //로그인 성공 이후 쿠키, 헤더에 AccessToken 부여
                 .successHandler(successHandler())
+                .redirectionEndpoint()
+                .baseUri("/login/oauth2/code/**")
+                .and()
                 .userInfoEndpoint()
                 //소셜 로그인 성공 시 후속 조치를 진행할 UserService 인터페이스의 구현체를 등록한다.
                 //리소스 서버(즉, 소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시할 수 있다.
@@ -64,7 +68,7 @@ public class SecurityConfig {
         http.logout()
                 .logoutSuccessUrl("/")
                 .clearAuthentication(true) //Authentication  객체 삭제
-                .deleteCookies("JSESSIONID");
+                .deleteCookies("refreshToken");
         return http.build();
     }
 
