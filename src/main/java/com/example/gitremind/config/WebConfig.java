@@ -13,6 +13,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 //서로 다른 도메인 간의 요청 및 응답에서 쿠키 및 인증 정보가 자동으로 전송 X
-                .allowCredentials(false);
+                .allowCredentials(false)
+                //1시간 유지
+                .maxAge(3600);
     }
 }

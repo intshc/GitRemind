@@ -1,6 +1,8 @@
 package com.example.gitremind.config;
 
 import com.example.gitremind.handler.CustomAuthenticationSuccessHandler;
+import com.example.gitremind.jwt.JwtAuthFilter;
+import com.example.gitremind.jwt.JwtUtil;
 import com.example.gitremind.repository.UserRepository;
 import com.example.gitremind.service.CustomOauth2UserService;
 import com.example.gitremind.service.TokenService;
@@ -15,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
@@ -29,6 +32,7 @@ public class SecurityConfig {
     private final HttpSession httpSession;
     private final TokenService tokenService;
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -64,6 +68,10 @@ public class SecurityConfig {
                 //리소스 서버(즉, 소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시할 수 있다.
                 .userService(customOauth2UserService);
 
+        //token 관련
+        http
+                .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+
         //logout 관련
         http.logout()
                 .logoutSuccessUrl("/")
@@ -75,5 +83,10 @@ public class SecurityConfig {
     @Bean
     public AuthenticationSuccessHandler successHandler() {
         return new CustomAuthenticationSuccessHandler(objectMapper, httpSession, tokenService, userRepository);
+    }
+
+    @Bean
+    public JwtAuthFilter jwtAuthFilter() {
+        return new JwtAuthFilter(jwtUtil);
     }
 }
