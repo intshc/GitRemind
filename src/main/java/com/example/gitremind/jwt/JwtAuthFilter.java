@@ -11,6 +11,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthFilter extends GenericFilterBean {
@@ -39,6 +41,17 @@ public class JwtAuthFilter extends GenericFilterBean {
     private boolean isExcludedEndpoint(HttpServletRequest httpRequest) {
         String requestUri = httpRequest.getRequestURI();
         String httpMethod = httpRequest.getMethod();
-        return httpMethod.equals(HttpMethod.GET.name()) && requestUri.equals("/user/api");
-    }
+        List<String> excludedEndpoints = Arrays.asList("/user/api","/login","/h2-console"
+        ,"/favicon.ico");
+
+        boolean isExcluded = false;
+        for (String prefix : excludedEndpoints) {
+            if (requestUri.startsWith(prefix)) {
+                isExcluded = true;
+                break;
+            }
+        }
+
+        // h2만 예외적으로 토큰 검증 x
+        return (httpMethod.equals(HttpMethod.GET.name()) && isExcluded)||requestUri.startsWith("/h2-console");   }
 }
