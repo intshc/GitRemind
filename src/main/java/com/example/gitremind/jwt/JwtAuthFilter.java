@@ -23,28 +23,39 @@ public class JwtAuthFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-            if (!isExcludedEndpoint(httpRequest)) {
+        if (!isExcludedEndpoint(httpRequest)) {
             String token = httpRequest.getHeader("Authorization");
-            String tokenWithoutBearer = token.substring("Bearer ".length());
-            String tokenType = "accessToken";
 
-            boolean isTokenValid = jwtUtil.verifyToken(tokenWithoutBearer, tokenType);
-            if (token != null && jwtUtil.verifyToken(tokenWithoutBearer, tokenType)) {
-                chain.doFilter(request, response); // 토큰 검증 성공 시 요청 처리
+            if (token != null && token.startsWith("Bearer ")) {
+                String tokenWithoutBearer = token.substring("Bearer ".length());
+                String tokenType = "accessToken";
+
+                boolean isTokenValid = jwtUtil.verifyToken(tokenWithoutBearer, tokenType);
+
+                if (isTokenValid) {
+                    // 토큰 검증 성공 시 통과 처리
+                    chain.doFilter(request, response);
+                } else {
+                    // 토큰 검증 실패 시 401 에러
+                    HttpServletResponse httpResponse = (HttpServletResponse) response;
+                    httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                }
             } else {
+                // 토큰이 없거나 접두사가 Bearer 아니면 401에러
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
-                httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 토큰 검증 실패 시 401 Unauthorized 응답 반환.
+                httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         } else {
-            chain.doFilter(request, response); // 요청이 RequestMatcher에 맞지 않으면, 거치지 않고 그대로 이어집니다.
+            // 지정된 경로는 통과 처리
+            chain.doFilter(request, response);
         }
     }
 
     private boolean isExcludedEndpoint(HttpServletRequest httpRequest) {
         String requestUri = httpRequest.getRequestURI();
         String httpMethod = httpRequest.getMethod();
-        List<String> excludedEndpoints = Arrays.asList("/user/api","/login","/h2-console"
-        ,"/favicon.ico");
+        List<String> excludedEndpoints = Arrays.asList("/user/api", "/login", "/h2-console"
+                , "/favicon.ico");
 
         boolean isExcluded = false;
         for (String prefix : excludedEndpoints) {
@@ -55,5 +66,6 @@ public class JwtAuthFilter extends GenericFilterBean {
         }
 
         // h2만 예외적으로 토큰 검증 x
-        return (httpMethod.equals(HttpMethod.GET.name()) && isExcluded)||requestUri.startsWith("/h2-console");   }
+        return (httpMethod.equals(HttpMethod.GET.name()) && isExcluded) || requestUri.startsWith("/h2-console");
+    }
 }
