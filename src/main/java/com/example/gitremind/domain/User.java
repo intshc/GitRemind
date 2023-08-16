@@ -23,7 +23,8 @@ public class User {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    //깃허브 로그인 시에 이메일이 없는 경우도 있음
+    @Column
     private String email;
 
     @Column

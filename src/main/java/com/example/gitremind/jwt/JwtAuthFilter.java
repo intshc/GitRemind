@@ -23,11 +23,13 @@ public class JwtAuthFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-        if (!isExcludedEndpoint(httpRequest)) {
+            if (!isExcludedEndpoint(httpRequest)) {
             String token = httpRequest.getHeader("Authorization");
-            String tokenType = "Bearer";
+            String tokenWithoutBearer = token.substring("Bearer ".length());
+            String tokenType = "accessToken";
 
-            if (token != null && jwtUtil.verifyToken(token, tokenType)) {
+            boolean isTokenValid = jwtUtil.verifyToken(tokenWithoutBearer, tokenType);
+            if (token != null && jwtUtil.verifyToken(tokenWithoutBearer, tokenType)) {
                 chain.doFilter(request, response); // 토큰 검증 성공 시 요청 처리
             } else {
                 HttpServletResponse httpResponse = (HttpServletResponse) response;

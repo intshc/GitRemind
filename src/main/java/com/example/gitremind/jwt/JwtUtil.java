@@ -27,6 +27,7 @@ public class JwtUtil {
 
         long now = System.currentTimeMillis();
         long validityTime = 3600000; // 1시간
+//        long validityTime = 60000; // 1분
         Date validity = new Date(now + validityTime);
         Date nowMillis = new Date(now);
 
@@ -64,8 +65,10 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
 
-            return type.equals(claims.get("type", String.class));
+            boolean isTypeValid = type.equals(claims.get("type", String.class));
+            boolean isExpired = claims.getExpiration().before(new Date());
 
+            return isTypeValid && !isExpired;
         } catch (Exception e) {
             // 예외 발생 시, 유효하지 않은 토큰
             return false;

@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .requestMatchers(toH2Console()).permitAll()
                 .requestMatchers("/", "/css/**", "/images/**",
                         "/js/**", "/h2-console/**", "/favicon.ico", "/login",
-                        "/login/oauth2/code/**",
+                        "/login/oauth2/code/**","/api/**",
                         "/user/api").permitAll()
                 .anyRequest().authenticated();
 
