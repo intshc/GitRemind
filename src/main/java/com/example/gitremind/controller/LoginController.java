@@ -23,10 +23,4 @@ public class LoginController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/")
-    public void redirect(HttpServletResponse response) throws Exception {
-        String redirect_uri = "http://localhost:3000/";
-        response.sendRedirect(redirect_uri);
-    }
-
 }

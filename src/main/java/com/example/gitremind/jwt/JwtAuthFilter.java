@@ -7,7 +7,6 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
@@ -55,7 +54,7 @@ public class JwtAuthFilter extends GenericFilterBean {
         String requestUri = httpRequest.getRequestURI();
         String httpMethod = httpRequest.getMethod();
         List<String> excludedEndpoints = Arrays.asList("/user/api", "/login", "/h2-console"
-                , "/favicon.ico");
+                , "/favicon.ico","/auth/refresh");
 
         boolean isExcluded = false;
         for (String prefix : excludedEndpoints) {
@@ -66,6 +65,6 @@ public class JwtAuthFilter extends GenericFilterBean {
         }
 
         // h2만 예외적으로 토큰 검증 x
-        return (httpMethod.equals(HttpMethod.GET.name()) && isExcluded) || requestUri.startsWith("/h2-console");
+        return isExcluded;
     }
 }

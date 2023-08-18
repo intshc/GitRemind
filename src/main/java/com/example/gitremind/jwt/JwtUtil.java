@@ -26,8 +26,8 @@ public class JwtUtil {
     public String createAccessToken(String subject, String type) {
 
         long now = System.currentTimeMillis();
-        long validityTime = 3600000; // 1시간
-//        long validityTime = 60000; // 1분
+//        long validityTime = 3600000; // 1시간
+        long validityTime = 60000; // 1분
         Date validity = new Date(now + validityTime);
         Date nowMillis = new Date(now);
 
@@ -56,6 +56,7 @@ public class JwtUtil {
                 .compact();
     }
 
+    //토큰 검증
     public boolean verifyToken(String token, String type) {
 
         try {
@@ -73,5 +74,15 @@ public class JwtUtil {
             // 예외 발생 시, 유효하지 않은 토큰
             return false;
         }
+    }
+
+    //토큰에 담긴 이름 가져오기
+    public String extractUsername(String token){
+        return Jwts.parserBuilder().
+                setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 }
