@@ -28,7 +28,6 @@ import static org.springframework.boot.autoconfigure.security.servlet.PathReques
 public class SecurityConfig {
 
     private final CustomOauth2UserService customOauth2UserService;
-    private final ObjectMapper objectMapper;
     private final HttpSession httpSession;
     private final TokenService tokenService;
     private final UserRepository userRepository;
@@ -82,7 +81,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {
-        return new CustomAuthenticationSuccessHandler(objectMapper, httpSession, tokenService, userRepository);
+        return new CustomAuthenticationSuccessHandler(httpSession, tokenService, userRepository);
     }
 
     @Bean

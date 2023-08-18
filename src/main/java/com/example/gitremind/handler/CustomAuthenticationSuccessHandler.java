@@ -28,7 +28,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final ObjectMapper objectMapper;
     private final HttpSession httpSession;
     private final TokenService tokenService;
     private final UserRepository userRepository;
@@ -50,7 +49,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String refreshToken = tokenService.createRefreshToken(user.getName());
 
         httpSession.setAttribute("accessToken", accessToken);
-        tokenService.saveRefreshTokenInRepo(userFromRepo, refreshToken);
 
         user.setAccessToken(accessToken);
         Cookie refreshTokenCookie = tokenService.createRefreshTokenCookie(refreshToken);

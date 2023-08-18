@@ -34,9 +34,6 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private final Set<RefreshToken> refreshTokens = new HashSet<>();
-
     @Builder
     public User(String username, String email, String picture, Role role) {
         this.username = username;
