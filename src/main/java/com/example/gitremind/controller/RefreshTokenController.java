@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.gitremind.service.TokenService.getRefreshTokenInCookies;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -23,16 +25,7 @@ public class RefreshTokenController {
     @PostMapping("/auth/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {
         // 쿠키에서 리프레시 토큰 가져오기
-        Cookie[] cookies = request.getCookies();
-        String refreshToken = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("refreshToken".equals(cookie.getName())) {
-                    refreshToken = cookie.getValue();
-                    break;
-                }
-            }
-        }
+        String refreshToken = getRefreshTokenInCookies(request);
 
         if (refreshToken == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refresh token 이 쿠키에 없습니다.");
@@ -42,8 +35,9 @@ public class RefreshTokenController {
         boolean isTokenValid = jwtUtil.verifyToken(refreshToken, "refreshToken");
 
         if (isTokenValid) {
-            String userName = jwtUtil.extractUsername(refreshToken);
-            String accessToken = jwtUtil.createAccessToken(userName, "accessToken");
+            Long id = jwtUtil.getId(refreshToken);
+            String userName = jwtUtil.getUsername(refreshToken);
+            String accessToken = jwtUtil.createAccessToken(userName,id, "accessToken");
 
             Map<String, String> responseMap = new HashMap<>();
             responseMap.put("accessToken", accessToken);

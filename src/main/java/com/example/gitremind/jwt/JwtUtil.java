@@ -23,7 +23,7 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String createAccessToken(String subject, String type) {
+    public String createAccessToken(String subject, Long id, String type) {
 
         long now = System.currentTimeMillis();
 //        long validityTime = 3600000; // 1시간
@@ -34,13 +34,14 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(subject)
                 .claim("type", type)
+                .claim("id", id)
                 .setExpiration(validity)
                 .setIssuedAt(nowMillis)
                 .signWith(key)
                 .compact();
     }
 
-    public String createRefreshToken(String subject, String type) {
+    public String createRefreshToken(String subject, Long id, String type) {
 
         long now = System.currentTimeMillis();
         long validityTime = 1209600000; // 2주
@@ -50,6 +51,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(subject)
                 .claim("type", type)
+                .claim("id", id)
                 .setExpiration(validity)
                 .setIssuedAt(nowMillis)
                 .signWith(key)
@@ -60,6 +62,10 @@ public class JwtUtil {
     public boolean verifyToken(String token, String type) {
 
         try {
+            if (token.startsWith("Bearer ")) {
+                //refreshToken 에도 Bearer 를 달아주려 했으나, 쿠키에는 공백이 못들어가 조건 넣음
+                token = token.substring("Bearer ".length());
+            }
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
@@ -77,12 +83,21 @@ public class JwtUtil {
     }
 
     //토큰에 담긴 이름 가져오기
-    public String extractUsername(String token){
+    public String getUsername(String token) {
         return Jwts.parserBuilder().
                 setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    public Long getId(String token) {
+        return Jwts.parserBuilder().
+                setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("id", Long.class);
     }
 }

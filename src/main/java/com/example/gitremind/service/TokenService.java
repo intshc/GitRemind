@@ -2,6 +2,7 @@ package com.example.gitremind.service;
 
 import com.example.gitremind.jwt.JwtUtil;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +12,12 @@ public class TokenService {
 
     private final JwtUtil jwtUtil;
 
-    public String createAccessToken(String username) {
-        return jwtUtil.createAccessToken(username, "accessToken");
+    public String createAccessToken(String username,Long id) {
+        return jwtUtil.createAccessToken(username,id, "accessToken");
     }
 
-    public String createRefreshToken(String username) {
-        return jwtUtil.createRefreshToken(username, "refreshToken");
+    public String createRefreshToken(String username,Long id) {
+        return jwtUtil.createRefreshToken(username, id,"refreshToken");
     }
 
     public Cookie createRefreshTokenCookie(String refreshToken) {
@@ -28,5 +29,17 @@ public class TokenService {
 
         return refreshTokenCookie;
     }
-
+    public static String getRefreshTokenInCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = null;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    refreshToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        return refreshToken;
+    }
 }

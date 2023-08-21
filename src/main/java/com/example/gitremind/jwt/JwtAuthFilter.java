@@ -25,22 +25,13 @@ public class JwtAuthFilter extends GenericFilterBean {
         if (!isExcludedEndpoint(httpRequest)) {
             String token = httpRequest.getHeader("Authorization");
 
-            if (token != null && token.startsWith("Bearer ")) {
-                String tokenWithoutBearer = token.substring("Bearer ".length());
-                String tokenType = "accessToken";
+            boolean isTokenValid = jwtUtil.verifyToken(token, "accessToken");
 
-                boolean isTokenValid = jwtUtil.verifyToken(tokenWithoutBearer, tokenType);
-
-                if (isTokenValid) {
-                    // 토큰 검증 성공 시 통과 처리
-                    chain.doFilter(request, response);
-                } else {
-                    // 토큰 검증 실패 시 401 에러
-                    HttpServletResponse httpResponse = (HttpServletResponse) response;
-                    httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                }
+            if (isTokenValid) {
+                // 토큰 검증 성공 시 통과 처리
+                chain.doFilter(request, response);
             } else {
-                // 토큰이 없거나 접두사가 Bearer 아니면 401에러
+                // 토큰 검증 실패 시 401 에러
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
                 httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }

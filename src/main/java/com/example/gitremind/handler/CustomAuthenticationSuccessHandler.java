@@ -44,12 +44,12 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         User userFromRepo = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        String accessToken = tokenService.createAccessToken(user.getName());
-        String refreshToken = tokenService.createRefreshToken(user.getName());
+        Long id = userFromRepo.getId();
+        String accessToken = tokenService.createAccessToken(user.getName(),id);
+        String refreshToken = tokenService.createRefreshToken(user.getName(),id);
 
         httpSession.setAttribute("accessToken", accessToken);
-
+        
         user.setAccessToken(accessToken);
         Cookie refreshTokenCookie = tokenService.createRefreshTokenCookie(refreshToken);
 

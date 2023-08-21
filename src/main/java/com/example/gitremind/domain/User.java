@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
-
 
 @Entity
 @Getter
@@ -34,12 +31,16 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Column
+    private String githubId;
+
     @Builder
-    public User(String username, String email, String picture, Role role) {
+    public User(String username, String email, String picture, Role role, String githubId) {
         this.username = username;
         this.email = email;
         this.picture = picture;
         this.role = role;
+        this.githubId = githubId;
     }
 
     public User update(String username, String picture) {
