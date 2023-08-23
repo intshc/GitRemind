@@ -6,7 +6,7 @@ import com.example.gitremind.jwt.JwtUtil;
 import com.example.gitremind.repository.UserRepository;
 import com.example.gitremind.service.CustomOauth2UserService;
 import com.example.gitremind.service.TokenService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.gitremind.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +32,7 @@ public class SecurityConfig {
     private final TokenService tokenService;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-
+    private final UserService userService;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -81,7 +81,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {
-        return new CustomAuthenticationSuccessHandler(httpSession, tokenService, userRepository);
+        return new CustomAuthenticationSuccessHandler(httpSession, tokenService, userRepository,userService);
     }
 
     @Bean

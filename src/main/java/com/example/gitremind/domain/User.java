@@ -34,6 +34,9 @@ public class User {
     @Column
     private String githubId;
 
+    @Column
+    private String accessToken;
+
     @Builder
     public User(String username, String email, String picture, Role role, String githubId) {
         this.username = username;
@@ -51,5 +54,9 @@ public class User {
 
     public String getRoleKey() {
         return this.role.getKey();
+    }
+
+    public void setAccessToken(String token){
+        this.accessToken = token;
     }
 }

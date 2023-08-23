@@ -4,7 +4,7 @@ import com.example.gitremind.domain.User;
 import com.example.gitremind.dto.SessionUser;
 import com.example.gitremind.repository.UserRepository;
 import com.example.gitremind.service.TokenService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.gitremind.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,6 +31,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final HttpSession httpSession;
     private final TokenService tokenService;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -49,8 +50,12 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String refreshToken = tokenService.createRefreshToken(user.getName(),id);
 
         httpSession.setAttribute("accessToken", accessToken);
-        
-        user.setAccessToken(accessToken);
+
+        try {
+            userService.setAccessToken(id,accessToken);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         Cookie refreshTokenCookie = tokenService.createRefreshTokenCookie(refreshToken);
 
         //provider 구하기 예)naver, google, github
