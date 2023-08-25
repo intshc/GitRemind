@@ -1,5 +1,8 @@
 package com.example.gitremind.controller;
 
+import com.example.gitremind.jwt.JwtUtil;
+import com.example.gitremind.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,13 +11,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 
+import static com.example.gitremind.service.TokenService.getRefreshTokenInCookies;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class GithubIdController {
 
+    private final UserService userService;
+    private final JwtUtil jwtUtil;
+
     @PostMapping("/api/github-name")
-    public void insertGithubInfo(@RequestBody HashMap<String, Object> map){
-        log.info(String.valueOf(map));
+    public void insertGithubInfo(@RequestBody HashMap<String, Object> map, HttpServletRequest request){
+        // 쿠키에서 리프레시 토큰 가져오기
+        String refreshToken = getRefreshTokenInCookies(request);
+        Long id = jwtUtil.getId(refreshToken);
+        String githubName = (String) map.get("githubName");
+        userService.setGitName(id, githubName);
+
     }
 }

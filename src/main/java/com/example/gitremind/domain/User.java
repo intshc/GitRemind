@@ -32,18 +32,18 @@ public class User {
     private Role role;
 
     @Column
-    private String githubId;
+    private String gitName;
 
     @Column
     private String accessToken;
 
     @Builder
-    public User(String username, String email, String picture, Role role, String githubId) {
+    public User(String username, String email, String picture, Role role, String gitName) {
         this.username = username;
         this.email = email;
         this.picture = picture;
         this.role = role;
-        this.githubId = githubId;
+        this.gitName = gitName;
     }
 
     public User update(String username, String picture) {
@@ -58,5 +58,9 @@ public class User {
 
     public void setAccessToken(String token){
         this.accessToken = token;
+    }
+
+    public void setGitName(String gitName){
+        this.gitName=gitName;
     }
 }

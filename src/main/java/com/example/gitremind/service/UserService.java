@@ -25,4 +25,11 @@ public class UserService {
         user.setAccessToken(token);
         userRepository.save(user);
     }
+
+    @Transactional
+    public void setGitName(Long id, String gitName){
+        User user = userRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        user.setGitName(gitName);
+        userRepository.save(user);
+    }
 }
