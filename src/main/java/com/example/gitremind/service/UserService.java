@@ -20,13 +20,6 @@ public class UserService {
     }
 
     @Transactional
-    public void setAccessToken(Long id, String token)throws Exception{
-        User user = userRepository.findById(id).orElseThrow(NoSuchElementException::new);
-        user.setAccessToken(token);
-        userRepository.save(user);
-    }
-
-    @Transactional
     public void setGitName(Long id, String gitName){
         User user = userRepository.findById(id).orElseThrow(NoSuchElementException::new);
         user.setGitName(gitName);

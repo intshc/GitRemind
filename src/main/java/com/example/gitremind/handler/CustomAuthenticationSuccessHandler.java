@@ -46,16 +46,8 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         User userFromRepo = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         Long id = userFromRepo.getId();
-        String accessToken = tokenService.createAccessToken(user.getName(),id);
         String refreshToken = tokenService.createRefreshToken(user.getName(),id);
 
-        httpSession.setAttribute("accessToken", accessToken);
-
-        try {
-            userService.setAccessToken(id,accessToken);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         Cookie refreshTokenCookie = tokenService.createRefreshTokenCookie(refreshToken);
 
         //provider 구하기 예)naver, google, github

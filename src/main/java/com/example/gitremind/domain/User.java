@@ -34,9 +34,6 @@ public class User {
     @Column
     private String gitName;
 
-    @Column
-    private String accessToken;
-
     @Builder
     public User(String username, String email, String picture, Role role, String gitName) {
         this.username = username;
@@ -56,9 +53,6 @@ public class User {
         return this.role.getKey();
     }
 
-    public void setAccessToken(String token){
-        this.accessToken = token;
-    }
 
     public void setGitName(String gitName){
         this.gitName=gitName;

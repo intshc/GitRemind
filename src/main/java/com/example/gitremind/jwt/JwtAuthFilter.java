@@ -44,7 +44,7 @@ public class JwtAuthFilter extends GenericFilterBean {
     private boolean isExcludedEndpoint(HttpServletRequest httpRequest) {
         String requestUri = httpRequest.getRequestURI();
         List<String> excludedEndpoints = Arrays.asList("/user/api", "/login", "/h2-console"
-                , "/favicon.ico","/auth/refresh","/api/auth/verify-token");
+                , "/favicon.ico","/auth/refresh","/api/auth/verify-token","/api/auth/access-token");
 
         boolean isExcluded = false;
         for (String prefix : excludedEndpoints) {

@@ -2,6 +2,7 @@ package com.example.gitremind.controller;
 
 import com.example.gitremind.domain.User;
 import com.example.gitremind.jwt.JwtUtil;
+import com.example.gitremind.service.TokenService;
 import com.example.gitremind.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class TokenController {
 
     private final JwtUtil jwtUtil;
     private final UserService userService;
+    private final TokenService tokenService;
 
     //accessToken 재발급
     @PostMapping("/auth/refresh")
@@ -73,4 +75,23 @@ public class TokenController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/api/auth/access-token")
+    public ResponseEntity<?> accessToken(HttpServletRequest request){
+        Map<String, Object> response = new HashMap<>();
+        String refreshToken = getRefreshTokenInCookies(request);
+
+        if (refreshToken == null || !jwtUtil.verifyToken(refreshToken, "refreshToken")) {
+            response.put("accessToken", null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        Long id = jwtUtil.getId(refreshToken);
+        String userName = jwtUtil.getUsername(refreshToken);
+        String accessToken = jwtUtil.createAccessToken(userName, id, "accessToken");
+
+        response.put("accessToken", accessToken);
+
+        return ResponseEntity.ok(response);
+    }
+
 }
