@@ -1,12 +1,14 @@
 package com.example.gitremind.controller;
 
+import com.example.gitremind.domain.User;
 import com.example.gitremind.jwt.JwtUtil;
-import jakarta.servlet.http.Cookie;
+import com.example.gitremind.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,10 +20,12 @@ import static com.example.gitremind.service.TokenService.getRefreshTokenInCookie
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class RefreshTokenController {
+public class TokenController {
 
     private final JwtUtil jwtUtil;
+    private final UserService userService;
 
+    //accessToken 재발급
     @PostMapping("/auth/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {
         // 쿠키에서 리프레시 토큰 가져오기
@@ -37,7 +41,7 @@ public class RefreshTokenController {
         if (isTokenValid) {
             Long id = jwtUtil.getId(refreshToken);
             String userName = jwtUtil.getUsername(refreshToken);
-            String accessToken = jwtUtil.createAccessToken(userName,id, "accessToken");
+            String accessToken = jwtUtil.createAccessToken(userName, id, "accessToken");
 
             Map<String, String> responseMap = new HashMap<>();
             responseMap.put("accessToken", accessToken);
@@ -48,5 +52,25 @@ public class RefreshTokenController {
             // 리프레시 토큰이 유효하지 않을 경우 오류 응답 반환
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token 유효기간이 끝났습니다.");
         }
+    }
+
+    //토큰 검증되면 사용자 정보 제공
+    @GetMapping("/api/auth/verify-token")
+    public ResponseEntity<?> verifyToken(HttpServletRequest request) throws Exception {
+        Map<String, Object> response = new HashMap<>();
+        String refreshToken = getRefreshTokenInCookies(request);
+
+        if (refreshToken == null || !jwtUtil.verifyToken(refreshToken, "refreshToken")) {
+            response.put("isValid", false);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        Long id = jwtUtil.getId(refreshToken);
+        User user = userService.getUser(id);
+
+        response.put("isValid", true);
+        response.put("user", user);
+
+        return ResponseEntity.ok(response);
     }
 }
