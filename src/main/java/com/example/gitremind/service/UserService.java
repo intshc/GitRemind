@@ -15,8 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User getUser(Long id) throws Exception {
-        User user = userRepository.findById(id).orElseThrow(NoSuchElementException::new);
-        return user;
+        return userRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     @Transactional

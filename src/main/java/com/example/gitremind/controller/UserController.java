@@ -15,7 +15,7 @@ import static com.example.gitremind.service.TokenService.getRefreshTokenInCookie
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class LoginController {
+public class UserController {
 
     private final UserService userService;
     private final JwtUtil jwtUtil;
