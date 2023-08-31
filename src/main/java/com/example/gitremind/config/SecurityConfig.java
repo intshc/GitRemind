@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/css/**", "/images/**",
                         "/js/**", "/h2-console/**", "/favicon.ico", "/login",
                         "/login/oauth2/code/**","/api/**","/auth/refresh",
-                        "/user/api").permitAll()
+                        "/api/user").permitAll()
                 .anyRequest().authenticated();
 
         //login 관련

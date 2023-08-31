@@ -1,6 +1,7 @@
 package com.example.gitremind.controller;
 
 import com.example.gitremind.domain.User;
+import com.example.gitremind.dto.UserDto;
 import com.example.gitremind.jwt.JwtUtil;
 import com.example.gitremind.service.TokenService;
 import com.example.gitremind.service.UserService;
@@ -68,7 +69,7 @@ public class TokenController {
         }
 
         Long id = jwtUtil.getId(refreshToken);
-        User user = userService.getUser(id);
+        UserDto user = userService.getUser(id);
 
         response.put("isValid", true);
         response.put("user", user);
