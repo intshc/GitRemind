@@ -49,6 +49,10 @@ public class User {
         return this;
     }
 
+    public void editName(String username, String gitName){
+        this.username = username;
+        this.gitName = gitName;
+    }
     public String getRoleKey() {
         return this.role.getKey();
     }

@@ -54,7 +54,6 @@ public class JwtAuthFilter extends GenericFilterBean {
             }
         }
 
-        // h2만 예외적으로 토큰 검증 x
         return isExcluded;
     }
 }

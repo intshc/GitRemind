@@ -1,6 +1,7 @@
 package com.example.gitremind.service;
 
 import com.example.gitremind.domain.User;
+import com.example.gitremind.dto.NameEdit;
 import com.example.gitremind.dto.UserDto;
 import com.example.gitremind.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,13 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
+    public void editName(Long id, NameEdit edit){
+        User user = userRepository.findById(id)
+                .orElseThrow(NoSuchElementException::new);
+
+        user.editName(edit.getUsername(), edit.getGithubName());
+    }
     @Transactional
     public void setGitName(Long id, String gitName){
         User user = userRepository.findById(id).orElseThrow(NoSuchElementException::new);
