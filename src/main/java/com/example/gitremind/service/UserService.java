@@ -27,6 +27,7 @@ public class UserService {
                 .id(user.getId())
                 .githubName(user.getGitName())
                 .picture(user.getPicture())
+                .email(user.getEmail())
                 .build();
     }
 

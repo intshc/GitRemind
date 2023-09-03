@@ -13,11 +13,14 @@ public class UserDto {
     private String githubName;
     private String username;
     private String picture;
+    private String email;
+
     @Builder
-    public UserDto(Long id, String githubName, String username, String picture) {
+    public UserDto(Long id, String githubName, String username, String picture, String email) {
         this.id = id;
         this.githubName = githubName;
         this.username = username;
         this.picture = picture;
+        this.email = email;
     }
 }
