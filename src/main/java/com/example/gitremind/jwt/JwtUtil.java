@@ -26,8 +26,7 @@ public class JwtUtil {
     public String createAccessToken(String subject, Long id, String type) {
 
         long now = System.currentTimeMillis();
-//        long validityTime = 3600000; // 1시간
-        long validityTime = 60000; // 1분
+        long validityTime = 3600000; // 1시간
         Date validity = new Date(now + validityTime);
         Date nowMillis = new Date(now);
 
