@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -31,7 +33,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final HttpSession httpSession;
     private final TokenService tokenService;
     private final UserRepository userRepository;
-    private final UserService userService;
+
+    @Value("${server.url}")
+    private String serverUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -53,7 +57,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         //provider 구하기 예)naver, google, github
         OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
         String provider = oauth2Token.getAuthorizedClientRegistrationId();
-        String redirect_uri = "http://localhost:3000/login/oauth2/code/" + provider;
+        String redirect_uri = serverUrl+":3000/login/oauth2/code/" + provider;
 
         response.setCharacterEncoding("utf-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

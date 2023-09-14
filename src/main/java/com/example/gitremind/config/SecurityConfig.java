@@ -32,7 +32,7 @@ public class SecurityConfig {
     private final TokenService tokenService;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private final UserService userService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -81,7 +81,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {
-        return new CustomAuthenticationSuccessHandler(httpSession, tokenService, userRepository,userService);
+        return new CustomAuthenticationSuccessHandler(httpSession, tokenService, userRepository);
     }
 
     @Bean

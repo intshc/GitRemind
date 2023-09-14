@@ -20,7 +20,7 @@ spring:
     username: sa  # H2 접속 시 입력할 username 정보 (원하는 것으로 입력)
     password:  # H2 접속 시 입력할 password 정보 (원하는 것으로 입력)
   config:
-    import: application-API-Key.yml
+    import: application-API-Key.yml , server-URL.yml
   security:
     oauth2:
       client:
@@ -34,7 +34,7 @@ spring:
           naver:
             client-id: ${naver.clientId}
             client-secret: ${naver.clientSecret}
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
+            redirect-uri: ${server.url}/login/oauth2/code/naver
             authorization-grant-type: authorization_code
             client-name: Naver
             scope:
@@ -47,6 +47,8 @@ spring:
             scope:
               - profile
               - email
+            redirect-uri: ${server.url}/login/oauth2/code/google
           github:
             client-id: ${github.clientId}
             client-secret: ${github.clientSecret}
+            redirect-uri: ${server.url}/login/oauth2/code/github
