@@ -4,14 +4,12 @@ import com.example.gitremind.domain.User;
 import com.example.gitremind.dto.SessionUser;
 import com.example.gitremind.repository.UserRepository;
 import com.example.gitremind.service.TokenService;
-import com.example.gitremind.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -34,8 +32,8 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final TokenService tokenService;
     private final UserRepository userRepository;
 
-    @Value("${server.url}")
-    private String serverUrl;
+    @Value("${front.url}")
+    private String frontUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -57,13 +55,15 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         //provider 구하기 예)naver, google, github
         OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
         String provider = oauth2Token.getAuthorizedClientRegistrationId();
-        String redirect_uri = serverUrl+":3000/login/oauth2/code/" + provider;
+        String redirect_uri = frontUrl+"/login/oauth2/code/" + provider;
 
         response.setCharacterEncoding("utf-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.addCookie(refreshTokenCookie);
-        response.sendRedirect(redirect_uri);
 
         clearAuthenticationAttributes(request);// 세션 제거
+
+        response.sendRedirect(redirect_uri);
+
     }
 }
