@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ import java.io.IOException;
 /**
  * 로그인 성공시 Access Token과 Refresh Token 발급
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -50,6 +52,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Long id = userFromRepo.getId();
         String refreshToken = tokenService.createRefreshToken(user.getName(),id);
 
+        log.info(refreshToken);
         Cookie refreshTokenCookie = tokenService.createRefreshTokenCookie(refreshToken);
 
         //provider 구하기 예)naver, google, github
@@ -57,13 +60,16 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String provider = oauth2Token.getAuthorizedClientRegistrationId();
         String redirect_uri = frontUrl+"/login/oauth2/code/" + provider;
 
+        log.info(redirect_uri);
+
         response.setCharacterEncoding("utf-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.addCookie(refreshTokenCookie);
 
-        clearAuthenticationAttributes(request);// 세션 제거
+//        clearAuthenticationAttributes(request);// 세션 제거
 
         response.sendRedirect(redirect_uri);
+        log.info("로그인 성공");
 
     }
 }

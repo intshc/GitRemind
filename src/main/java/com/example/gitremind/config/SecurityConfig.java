@@ -19,8 +19,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -47,9 +45,8 @@ public class SecurityConfig {
         //요청에 대한 권한 설정
         http
                 .authorizeHttpRequests()
-                .requestMatchers(toH2Console()).permitAll()
                 .requestMatchers("/", "/css/**", "/images/**",
-                        "/js/**", "/h2-console/**", "/favicon.ico", "/login",
+                        "/js/**", "/favicon.ico", "/login",
                         "/login/oauth2/code/**","/api/**","/auth/refresh",
                         "/api/user").permitAll()
                 .anyRequest().authenticated();
